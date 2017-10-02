@@ -161,6 +161,12 @@ RUN if [ ${CODEIGNITER} = true ]; then \
 ADD ./laravel.ini /usr/local/etc/php/conf.d
 ADD ./laravel.pool.conf /usr/local/etc/php-fpm.d/
 
+# Install dependencies
+RUN apt-get update && \
+    curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+RUN apt-get --assume-yes install zip unzip git
+
 RUN rm -r /var/lib/apt/lists/*
 
 RUN usermod -u 1000 www-data

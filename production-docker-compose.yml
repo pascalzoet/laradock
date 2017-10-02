@@ -2,27 +2,45 @@ version: '2'
 
 services:
 
+### Applications Code Container #############################
+
+    applications:
+        image: tianon/true
+        volumes:
+            - ../:/var/www
+            - D:/workspace/mercury/:/var/www/mercury
+            - D:/workspace/mailer/:/var/www/mailer
+            - D:/workspace/redirect/:/var/www/redirect
+            - D:/workspace/tabulation/:/var/www/tabulation
+            - D:/workspace/html/:/var/www/html
+
 ### Workspace Utilities Container ###########################
 
     workspace:
         build:
             context: ./workspace
             args:
-                - INSTALL_XDEBUG=false
-                - INSTALL_MONGO=false
+                - INSTALL_XDEBUG=true
+                - INSTALL_MONGO=true
                 - INSTALL_NODE=false
                 - INSTALL_YARN=false
                 - INSTALL_DRUSH=false
                 - INSTALL_AEROSPIKE_EXTENSION=false
+                - INSTALL_V8JS_EXTENSION=false
                 - COMPOSER_GLOBAL_INSTALL=false
-                - INSTALL_WORKSPACE_SSH=false
+                - INSTALL_WORKSPACE_SSH=true
                 - PUID=1000
                 - PGID=1000
                 - NODE_VERSION=stable
+                - YARN_VERSION=latest
+                - TZ=UTC
         volumes_from:
-            - volumes_source
+            - applications
+        extra_hosts:
+            # IMPORTANT: Replace with your Docker Host IP (will be appended to /etc/hosts)
+            - "dockerhost:192.168.99.100"
         ports:
-           - "22:22"
+           - "2222:22"
         tty: true
 
 ### PHP-FPM Container #######################################
@@ -31,32 +49,115 @@ services:
         build:
             context: ./php-fpm
             args:
-                - INSTALL_XDEBUG=false
-                - INSTALL_MONGO=false
+                - INSTALL_XDEBUG=true
+                - INSTALL_SOAP=true
+                - INSTALL_MONGO=true
                 - INSTALL_ZIP_ARCHIVE=false
                 - INSTALL_MEMCACHED=false
                 - INSTALL_OPCACHE=false
                 - INSTALL_AEROSPIKE_EXTENSION=false
+                - CODEIGNITER=false
             dockerfile: Dockerfile-70
         volumes_from:
-            - volumes_source
+            - applications
         expose:
             - "9000"
         links:
             - workspace
+        extra_hosts:
+            # IMPORTANT: Replace with your Docker Host IP (will be appended to /etc/hosts)
+            - "dockerhost:192.168.99.100"
+        environment:
+            # IMPORTANT: Set the Remote Interpreter entry matching name to `laravel`
+            - PHP_IDE_CONFIG=serverName=laravel
 
-### Application Code Container ######################
+### Nginx Server Container ##################################
 
-    volumes_source:
-        image: tianon/true
+    nginx:
+        build:
+            context: ./nginx
+            args:
+                - PHP_UPSTREAM=php-fpm
+        volumes_from:
+            - applications
         volumes:
-            - ../:/var/www
+            - ./logs/nginx/:/var/log/nginx
+            - ./nginx/sites/:/etc/nginx/sites-available
+        ports:
+            - "80:80"
+            - "443:443"
+        links:
+            - php-fpm
 
-### Databases Data Container ################################
+### MySQL Container #########################################
 
-    volumes_data:
-        image: tianon/true
+    mysql:
+        build: 
+            context: ./mysql
+            args:
+                - MYSQL_DATABASE=homestead
+                - MYSQL_USER=homestead
+                - MYSQL_PASSWORD=secret
+                - MYSQL_ROOT_PASSWORD=root
         volumes:
-#            - ./data/mysql:/var/lib/mysql
+            - mysql:/var/lib/mysql
+        ports:
+            - "3306:3306"
 
-### Add All your Software Containers below ###############################
+### MongoDB Container #######################################
+
+    mongo:
+        build: ./mongo
+        ports:
+            - "27017:27017"
+        volumes:
+            - mongo:/data/db
+
+### Redis Container #########################################
+
+    redis:
+        build: ./redis
+        volumes:
+            - redis:/data
+        ports:
+            - "6379:6379"
+
+### Beanstalkd Container ####################################
+
+    beanstalkd:
+        build: ./beanstalkd
+        ports:
+            - "11300:11300"
+        privileged: true
+        links:
+            - php-fpm
+
+### Volumes Setup ###########################################
+
+volumes:
+    mysql:
+        driver: "local"
+    postgres:
+        driver: "local"
+    memcached:
+        driver: "local"
+    redis:
+        driver: "local"
+    neo4j:
+        driver: "local"
+    mariadb:
+        driver: "local"
+    mongo:
+        driver: "local"
+    phpmyadmin:
+        driver: "local"
+    aerospike:
+        driver: "local"
+    caddy:
+        driver: "local"
+    elasticsearch-data:
+        driver: "local"
+    elasticsearch-pkugins:
+        driver: "local"
+    sessions:    ## nothing is connected to this (- ./data/sessions:/sessions)
+        driver: "local"
