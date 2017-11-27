@@ -7,7 +7,7 @@ services:
     applications:
         image: tianon/true
         volumes:
-            - ../:/var/www
+            - D:/workspace/:/var/www
             - D:/workspace/mercury/:/var/www/mercury
             - D:/workspace/mailer/:/var/www/mailer
             - D:/workspace/redirect/:/var/www/redirect
@@ -31,7 +31,7 @@ services:
                 - INSTALL_WORKSPACE_SSH=true
                 - PUID=1000
                 - PGID=1000
-                - NODE_VERSION=stable
+                - NODE_VERSION=lts/*
                 - YARN_VERSION=latest
                 - TZ=UTC
         volumes_from:
