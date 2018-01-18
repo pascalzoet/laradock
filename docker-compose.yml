@@ -7,13 +7,7 @@ services:
     applications:
         image: tianon/true
         volumes:
-            - ../:/var/www
-            - D:/workspace/mercury/:/var/www/mercury
-            - D:/workspace/mailer/:/var/www/mailer
-            - D:/workspace/redirect/:/var/www/redirect
-            - D:/workspace/website-panelinzicht/:/var/www/website-panelinzicht
-            - D:/workspace/html/:/var/www/html
-
+            - C:/workspace/:/var/www
 ### Workspace Utilities Container ###########################
 
     workspace:
