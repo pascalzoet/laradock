@@ -51,8 +51,9 @@ services:
                 - INSTALL_MEMCACHED=false
                 - INSTALL_OPCACHE=false
                 - INSTALL_AEROSPIKE_EXTENSION=false
+                - INSTALL_BCMATH=true
                 - CODEIGNITER=false
-            dockerfile: Dockerfile-70
+            dockerfile: Dockerfile-71
         volumes_from:
             - applications
         expose:
@@ -127,6 +128,15 @@ services:
         links:
             - php-fpm
 
+### Beanstalkd Console Container ############################
+
+    beanstalkd-console:
+        build: ./beanstalkd-console
+        ports:
+            - "2080:2080"
+        links:
+            - beanstalkd
+
 ### Volumes Setup ###########################################
 
 volumes:
@@ -156,3 +166,4 @@ volumes:
         driver: "local"
     sessions:    ## nothing is connected to this (- ./data/sessions:/sessions)
         driver: "local"
+
