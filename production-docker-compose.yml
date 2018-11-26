@@ -137,6 +137,8 @@ services:
         links:
             - beanstalkd
 
+
+            
 ### Volumes Setup ###########################################
 
 volumes:
