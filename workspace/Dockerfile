@@ -161,7 +161,7 @@ RUN if [ ${INSTALL_NODE} = true ]; then \
         nvm install ${NODE_VERSION} && \
         nvm use ${NODE_VERSION} && \
         nvm alias ${NODE_VERSION} && \
-        npm install -g gulp bower vue-cli \
+        npm install -g gulp vue-cli \
 ;fi
 
 # Wouldn't execute when added to the RUN statement in the above block
@@ -183,6 +183,19 @@ RUN if [ ${INSTALL_NODE} = true ]; then \
 
 # Add PATH for node
 ENV PATH $PATH:$NVM_DIR/versions/node/v${NODE_VERSION}/bin
+
+###########################################################################
+# PYTHON:
+###########################################################################
+
+ARG INSTALL_PYTHON=false
+ENV INSTALL_PYTHON ${INSTALL_PYTHON}
+
+RUN if [ ${INSTALL_PYTHON} = true ]; then \
+  apt-get -y install python python-pip python-dev build-essential  \
+  && python -m pip install --upgrade pip  \
+  && python -m pip install --upgrade virtualenv \
+;fi
 
 #####################################
 # YARN:

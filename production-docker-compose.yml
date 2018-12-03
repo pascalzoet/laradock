@@ -15,6 +15,7 @@ services:
         build:
             context: ./workspace
             args:
+                - INSTALL_PYTHON=true
                 - INSTALL_XDEBUG=true
                 - INSTALL_MONGO=true
                 - INSTALL_NODE=true
@@ -26,7 +27,7 @@ services:
                 - INSTALL_WORKSPACE_SSH=true
                 - PUID=1000
                 - PGID=1000
-                - NODE_VERSION=lts/*
+                - NODE_VERSION=8/*
                 - YARN_VERSION=latest
                 - TZ=UTC
         volumes_from:
@@ -53,7 +54,7 @@ services:
                 - INSTALL_AEROSPIKE_EXTENSION=false
                 - INSTALL_BCMATH=true
                 - CODEIGNITER=false
-            dockerfile: Dockerfile-71
+            dockerfile: Dockerfile-70
         volumes_from:
             - applications
         expose:
