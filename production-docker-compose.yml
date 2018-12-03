@@ -15,6 +15,7 @@ services:
         build:
             context: ./workspace
             args:
+                - INSTALL_RUBY=true
                 - INSTALL_PYTHON=true
                 - INSTALL_XDEBUG=true
                 - INSTALL_MONGO=true

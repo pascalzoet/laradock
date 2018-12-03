@@ -197,6 +197,19 @@ RUN if [ ${INSTALL_PYTHON} = true ]; then \
   && python -m pip install --upgrade virtualenv \
 ;fi
 
+###########################################################################
+# RUBY:
+###########################################################################
+
+ARG INSTALL_RUBY=false
+ENV INSTALL_RUBY ${INSTALL_RUBY}
+
+RUN if [ ${INSTALL_RUBY} = true ]; then \
+  apt-get -y install ruby ruby-dev
+;fi
+
+
+
 #####################################
 # YARN:
 #####################################
