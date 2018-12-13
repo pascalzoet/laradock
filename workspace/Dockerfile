@@ -205,7 +205,7 @@ ARG INSTALL_RUBY=false
 ENV INSTALL_RUBY ${INSTALL_RUBY}
 
 RUN if [ ${INSTALL_RUBY} = true ]; then \
-  apt-get -y install ruby ruby-dev
+  apt-get -y install ruby ruby-dev \
 ;fi
 
 
