@@ -13,7 +13,7 @@
 FROM laradock/workspace:1.2
 
 MAINTAINER Mahmoud Zalt <mahmoud@zalt.me>
-
+RUN apt-get update
 #
 #--------------------------------------------------------------------------
 # Mandatory Software's Installation

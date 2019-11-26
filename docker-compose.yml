@@ -7,7 +7,7 @@ services:
     applications:
         image: tianon/true
         volumes:
-            - C:/workspace/:/var/www
+            -   ~/workspace/:/var/www
 ### Workspace Utilities Container ###########################
 
     workspace:
@@ -311,6 +311,16 @@ services:
         links:
             - php-fpm
 
+### Kibana Container #################################
+
+    kibana:
+        image: docker.elastic.co/kibana/kibana:7.0.0
+        environment:
+          SERVER_NAME: kibana
+          ELASTICSEARCH_HOSTS: http://10.78.11.19:9200
+        ports:
+            - "5601:5601"
+
 ### Volumes Setup ###########################################
 
 volumes:
@@ -339,4 +349,6 @@ volumes:
     elasticsearch-pkugins:
         driver: "local"
     sessions:    ## nothing is connected to this (- ./data/sessions:/sessions)
+        driver: "local"
+    kibana:
         driver: "local"
