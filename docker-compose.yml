@@ -2,22 +2,24 @@ version: '2'
 
 services:
 
-### Applications Code Container #############################
+    ### Applications Code Container #############################
 
     applications:
         image: tianon/true
         volumes:
-            -   ~/workspace/:/var/www
-### Workspace Utilities Container ###########################
+            -   ~/Documents/workspace/:/var/www
 
+    ### Workspace Utilities Container ###########################
     workspace:
         build:
             context: ./workspace
             args:
+                - INSTALL_RUBY=true
+                - INSTALL_PYTHON=true
                 - INSTALL_XDEBUG=true
-                - INSTALL_MONGO=true
-                - INSTALL_NODE=false
-                - INSTALL_YARN=false
+                - INSTALL_MONGO=false
+                - INSTALL_NODE=true
+                - INSTALL_YARN=true
                 - INSTALL_DRUSH=false
                 - INSTALL_AEROSPIKE_EXTENSION=false
                 - INSTALL_V8JS_EXTENSION=false
@@ -25,33 +27,39 @@ services:
                 - INSTALL_WORKSPACE_SSH=true
                 - PUID=1000
                 - PGID=1000
-                - NODE_VERSION=stable
+                - NODE_VERSION=8/*
                 - YARN_VERSION=latest
                 - TZ=UTC
         volumes_from:
             - applications
         extra_hosts:
             # IMPORTANT: Replace with your Docker Host IP (will be appended to /etc/hosts)
-            - "dockerhost:192.168.99.100"
+            - "dockerhost:10.78.10.177"
+            - "dev.hettestpanel.io:10.78.10.177"
+            - "dev.mercury.io:10.78.10.177"
+            - "tabulation.io:10.78.10.177"
+            - "lsapi.io:192.168.0.1"
         ports:
-           - "2222:22"
+            - "2222:22"
         tty: true
 
-### PHP-FPM Container #######################################
+    ### PHP-FPM Container #######################################
 
     php-fpm:
         build:
             context: ./php-fpm
             args:
                 - INSTALL_XDEBUG=true
-                - INSTALL_SOAP=true
+                - INSTALL_SOAP=false
                 - INSTALL_MONGO=true
                 - INSTALL_ZIP_ARCHIVE=true
                 - INSTALL_MEMCACHED=false
                 - INSTALL_OPCACHE=false
                 - INSTALL_AEROSPIKE_EXTENSION=false
+                - INSTALL_BCMATH=true
+                - INSTALL_PHPREDIS=true
                 - CODEIGNITER=false
-            dockerfile: Dockerfile-70
+            dockerfile: Dockerfile-73
         volumes_from:
             - applications
         expose:
@@ -60,12 +68,16 @@ services:
             - workspace
         extra_hosts:
             # IMPORTANT: Replace with your Docker Host IP (will be appended to /etc/hosts)
-            - "dockerhost:192.168.99.100"
+            - "dockerhost:10.78.10.177"
+            - "dev.hettestpanel.io:10.78.10.177"
+            - "dev.mercury.io:10.78.10.177"
+            - "tabulation.io:10.78.10.177"
+            - "lsapi.io:192.168.0.1"
         environment:
             # IMPORTANT: Set the Remote Interpreter entry matching name to `laravel`
             - PHP_IDE_CONFIG=serverName=laravel
 
-### Nginx Server Container ##################################
+    ### Nginx Server Container ##################################
 
     nginx:
         build:
@@ -83,38 +95,10 @@ services:
         links:
             - php-fpm
 
-### Apache Server Container #################################
-
-    apache2:
-        build:
-            context: ./apache2
-            args:
-                - PHP_SOCKET=php-fpm:9000
-        volumes_from:
-            - applications
-        volumes:
-            - ./logs/apache2:/var/log/apache2
-        ports:
-            - "80:80"
-            - "443:443"
-        links:
-            - php-fpm
-
-### HHVM Container ##########################################
-
-    hhvm:
-        build: ./hhvm
-        volumes_from:
-            - applications
-        expose:
-            - "9000"
-        links:
-            - workspace
-
-### MySQL Container #########################################
+    ### MySQL Container #########################################
 
     mysql:
-        build: 
+        build:
             context: ./mysql
             args:
                 - MYSQL_DATABASE=homestead
@@ -124,61 +108,9 @@ services:
         volumes:
             - mysql:/var/lib/mysql
         ports:
-            - "3306:3306"
+            - "3307:3306"
 
-### MariaDB Container #######################################
-
-    mariadb:
-        build: ./mariadb
-        volumes:
-            - mysql:/var/lib/mysql
-        ports:
-            - "3306:3306"
-        environment:
-            MYSQL_DATABASE: homestead
-            MYSQL_USER: homestead
-            MYSQL_PASSWORD: secret
-            MYSQL_ROOT_PASSWORD: root
-
-### PostgreSQL Container ####################################
-
-    postgres:
-        build: ./postgres
-        volumes:
-            - postgres:/var/lib/postgresql/data
-        ports:
-            - "5432:5432"
-        environment:
-            POSTGRES_DB: homestead
-            POSTGRES_USER: homestead
-            POSTGRES_PASSWORD: secret
-
-### PostgreSQL PostGis Container ############################
-
-    postgres-postgis:
-        build: ./postgres-postgis
-        volumes:
-            - postgres:/var/lib/postgresql/data
-        ports:
-            - "5432:5432"
-        environment:
-            POSTGRES_DB: homestead
-            POSTGRES_USER: homestead
-            POSTGRES_PASSWORD: secret
-
-### Neo4j Container #########################################
-
-    neo4j:
-        build: ./neo4j
-        ports:
-            - "7474:7474"
-            - "1337:1337"
-        environment:
-            - NEO4J_AUTH=homestead:secret
-        volumes:
-            - neo4j:/var/lib/neo4j/data
-
-### MongoDB Container #######################################
+    ### MongoDB Container #######################################
 
     mongo:
         build: ./mongo
@@ -187,7 +119,7 @@ services:
         volumes:
             - mongo:/data/db
 
-### Redis Container #########################################
+    ### Redis Container #########################################
 
     redis:
         build: ./redis
@@ -196,33 +128,7 @@ services:
         ports:
             - "6379:6379"
 
-### Aerospike c Container ###################################
-
-    aerospike:
-        build: ./aerospike
-        volumes_from:
-            - workspace
-        volumes:
-            - aerospike:/opt/aerospike/data
-        ports:
-            - "3000:3000"
-            - "3001:3001"
-            - "3002:3002"
-            - "3003:3003"
-
-
-### Memcached Container #####################################
-
-    memcached:
-        build: ./memcached
-        volumes:
-            - memcached:/var/lib/memcached
-        ports:
-            - "11211:11211"
-        links:
-            - php-fpm
-
-### Beanstalkd Container ####################################
+    ### Beanstalkd Container ####################################
 
     beanstalkd:
         build: ./beanstalkd
@@ -232,22 +138,7 @@ services:
         links:
             - php-fpm
 
-### RabbitMQ Container ######################################
-
-    rabbitmq:
-        build: ./rabbitmq
-        ports:
-            - "5672:5672"
-            - "15671:15671"
-            - "8080:15672"
-        privileged: true
-        environment:
-            RABBITMQ_DEFAULT_USER: guest
-            RABBITMQ_DEFAULT_PASS: guest
-        links:
-            - php-fpm
-
-### Beanstalkd Console Container ############################
+    ### Beanstalkd Console Container ############################
 
     beanstalkd-console:
         build: ./beanstalkd-console
@@ -256,70 +147,7 @@ services:
         links:
             - beanstalkd
 
-### Caddy Server Container ##################################
 
-    caddy:
-        build: ./caddy
-        ports:
-            - "80:80"
-            - "443:443"
-            - "2015:2015"
-        volumes_from:
-            - applications
-        volumes:
-            - ./caddy/Caddyfile:/etc/Caddyfile
-            - ./logs/caddy:/var/log/caddy
-        links:
-            - php-fpm
-
-### phpMyAdmin Container ####################################
-
-    phpmyadmin:
-        build: ./phpmyadmin
-        environment:
-            PMA_ARBITRARY: 1
-            MYSQL_USER: homestead
-            MYSQL_PASSWORD: secret
-            MYSQL_ROOT_PASSWORD: root
-        ports:
-            - "8080:80"
-        links:
-            # for mysql container
-            - "mysql:db"
-            # for mariadb container
-            # - "mariadb:db"
-
-### pgAdmin Container #######################################
-
-    pgadmin:
-        build: ./pgadmin
-        ports:
-            - "5050:5050"
-        links:
-            - postgres
-
-### ElasticSearch Container #################################
-
-    elasticsearch:
-        build: ./elasticsearch
-        volumes:
-            - elasticsearch-data:/usr/share/elasticsearch/data
-            - elasticsearch-pkugins:/usr/share/elasticsearch/data
-        ports:
-            - "9200:9200"
-            - "9300:9300"
-        links:
-            - php-fpm
-
-### Kibana Container #################################
-
-    kibana:
-        image: docker.elastic.co/kibana/kibana:7.0.0
-        environment:
-          SERVER_NAME: kibana
-          ELASTICSEARCH_HOSTS: http://10.78.11.19:9200
-        ports:
-            - "5601:5601"
 
 ### Volumes Setup ###########################################
 
@@ -350,5 +178,4 @@ volumes:
         driver: "local"
     sessions:    ## nothing is connected to this (- ./data/sessions:/sessions)
         driver: "local"
-    kibana:
-        driver: "local"
+

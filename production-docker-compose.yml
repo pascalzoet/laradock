@@ -2,15 +2,14 @@ version: '2'
 
 services:
 
-### Applications Code Container #############################
+    ### Applications Code Container #############################
 
     applications:
         image: tianon/true
         volumes:
-            -   ~/workspace/:/var/www
+            -   ~/Documents/workspace/:/var/www
 
-### Workspace Utilities Container ###########################
-
+    ### Workspace Utilities Container ###########################
     workspace:
         build:
             context: ./workspace
@@ -35,14 +34,16 @@ services:
             - applications
         extra_hosts:
             # IMPORTANT: Replace with your Docker Host IP (will be appended to /etc/hosts)
-            - "dockerhost:192.168.65.2"
-            - "api.hettestpanel.nl:192.168.65.2"
-            - "dev.vragenlijstinvullen.nl:192.168.65.2"
+            - "dockerhost:10.78.10.177"
+            - "dev.hettestpanel.io:10.78.10.177"
+            - "dev.mercury.io:10.78.10.177"
+            - "tabulation.io:10.78.10.177"
+            - "lsapi.io:192.168.0.1"
         ports:
-           - "2222:22"
+            - "2222:22"
         tty: true
 
-### PHP-FPM Container #######################################
+    ### PHP-FPM Container #######################################
 
     php-fpm:
         build:
@@ -58,7 +59,7 @@ services:
                 - INSTALL_BCMATH=true
                 - INSTALL_PHPREDIS=true
                 - CODEIGNITER=false
-            dockerfile: Dockerfile-71
+            dockerfile: Dockerfile-73
         volumes_from:
             - applications
         expose:
@@ -67,15 +68,16 @@ services:
             - workspace
         extra_hosts:
             # IMPORTANT: Replace with your Docker Host IP (will be appended to /etc/hosts)
-            - "dockerhost:192.168.65.2"
-            - "api.hettestpanel.nl:192.168.65.2"
-            - "dev.vragenlijstinvullen.nl:192.168.65.2"
-            - "workspace.panelinzicht.nl:192.168.65.2"
+            - "dockerhost:10.78.10.177"
+            - "dev.hettestpanel.io:10.78.10.177"
+            - "dev.mercury.io:10.78.10.177"
+            - "tabulation.io:10.78.10.177"
+            - "lsapi.io:192.168.0.1"
         environment:
             # IMPORTANT: Set the Remote Interpreter entry matching name to `laravel`
             - PHP_IDE_CONFIG=serverName=laravel
 
-### Nginx Server Container ##################################
+    ### Nginx Server Container ##################################
 
     nginx:
         build:
@@ -93,10 +95,10 @@ services:
         links:
             - php-fpm
 
-### MySQL Container #########################################
+    ### MySQL Container #########################################
 
     mysql:
-        build: 
+        build:
             context: ./mysql
             args:
                 - MYSQL_DATABASE=homestead
@@ -108,7 +110,7 @@ services:
         ports:
             - "3307:3306"
 
-### MongoDB Container #######################################
+    ### MongoDB Container #######################################
 
     mongo:
         build: ./mongo
@@ -117,7 +119,7 @@ services:
         volumes:
             - mongo:/data/db
 
-### Redis Container #########################################
+    ### Redis Container #########################################
 
     redis:
         build: ./redis
@@ -126,7 +128,7 @@ services:
         ports:
             - "6379:6379"
 
-### Beanstalkd Container ####################################
+    ### Beanstalkd Container ####################################
 
     beanstalkd:
         build: ./beanstalkd
@@ -136,7 +138,7 @@ services:
         links:
             - php-fpm
 
-### Beanstalkd Console Container ############################
+    ### Beanstalkd Console Container ############################
 
     beanstalkd-console:
         build: ./beanstalkd-console
@@ -146,7 +148,7 @@ services:
             - beanstalkd
 
 
-            
+
 ### Volumes Setup ###########################################
 
 volumes:
