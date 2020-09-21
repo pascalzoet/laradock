@@ -7,7 +7,7 @@ services:
     applications:
         image: tianon/true
         volumes:
-            -   ~/Documents/workspace/:/var/www
+            -   ~/workspace/:/var/www
 
     ### Workspace Utilities Container ###########################
     workspace:
@@ -37,8 +37,11 @@ services:
             - "dockerhost:10.78.10.177"
             - "dev.hettestpanel.io:10.78.10.177"
             - "dev.mercury.io:10.78.10.177"
-            - "tabulation.io:10.78.10.177"
-            - "lsapi.io:192.168.0.1"
+            - "tabulation.io:192.168.0.1"
+            - "websitepi.io:192.168.0.1"
+            - "pibackend.io:192.168.0.1"
+            - "graphql.io:192.168.0.1"
+            - "mercury.test:192.168.0.1"
         ports:
             - "2222:22"
         tty: true
@@ -71,12 +74,16 @@ services:
             - "dockerhost:10.78.10.177"
             - "dev.hettestpanel.io:10.78.10.177"
             - "dev.mercury.io:10.78.10.177"
-            - "tabulation.io:10.78.10.177"
-            - "lsapi.io:192.168.0.1"
+            - "tabulation.io:192.168.0.1"
+            - "websitepi.io:192.168.0.1"
+            - "pibackend.io:192.168.0.1"
+            - "graphql.io:192.168.0.1"
+            - "mercury.test:192.168.0.1"
         environment:
             # IMPORTANT: Set the Remote Interpreter entry matching name to `laravel`
             - PHP_IDE_CONFIG=serverName=laravel
-
+            - PHP_XDEBUG_ENABLED = 1
+            - XDEBUG_CONFIG=remote_host=10.254.254.254
     ### Nginx Server Container ##################################
 
     nginx:
