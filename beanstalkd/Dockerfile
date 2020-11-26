@@ -1,4 +1,4 @@
-FROM phusion/baseimage:latest
+FROM phusion/baseimage:master
 
 MAINTAINER Mahmoud Zalt <mahmoud@zalt.me>
 
