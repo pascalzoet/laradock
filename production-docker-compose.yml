@@ -82,7 +82,7 @@ services:
         environment:
             # IMPORTANT: Set the Remote Interpreter entry matching name to `laravel`
             - PHP_IDE_CONFIG=serverName=laravel
-            - PHP_XDEBUG_ENABLED = 1
+            - PHP_XDEBUG_ENABLE=1
             - XDEBUG_CONFIG=remote_host=10.254.254.254
     ### Nginx Server Container ##################################
 
