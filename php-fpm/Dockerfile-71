@@ -387,7 +387,7 @@ ADD ./laravel.pool.conf /usr/local/etc/php-fpm.d/
 
 # Install dependencies
 RUN apt-get update && \
-    curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+    curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer --version=1.10.16
 
 RUN apt-get update && apt-get --assume-yes install zip unzip git
 

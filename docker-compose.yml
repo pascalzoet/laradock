@@ -7,7 +7,7 @@ services:
     applications:
         image: tianon/true
         volumes:
-            -   ~/Documents/workspace/:/var/www
+            -   ~/workspace/:/var/www
 
     ### Workspace Utilities Container ###########################
     workspace:
@@ -16,7 +16,7 @@ services:
             args:
                 - INSTALL_RUBY=true
                 - INSTALL_PYTHON=true
-                - INSTALL_XDEBUG=true
+                - INSTALL_XDEBUG=false
                 - INSTALL_MONGO=false
                 - INSTALL_NODE=true
                 - INSTALL_YARN=true
@@ -32,13 +32,9 @@ services:
                 - TZ=UTC
         volumes_from:
             - applications
-        extra_hosts:
-            # IMPORTANT: Replace with your Docker Host IP (will be appended to /etc/hosts)
-            - "dockerhost:10.78.10.177"
-            - "dev.hettestpanel.io:10.78.10.177"
-            - "dev.mercury.io:10.78.10.177"
-            - "tabulation.io:10.78.10.177"
-            - "lsapi.io:192.168.0.1"
+        extra_hosts: # Must be the ip of your docker0 network card!
+            - "dockerhost:172.17.0.1"
+            - "mercuy.test:172.17.0.1"
         ports:
             - "2222:22"
         tty: true
@@ -49,7 +45,7 @@ services:
         build:
             context: ./php-fpm
             args:
-                - INSTALL_XDEBUG=true
+                - INSTALL_XDEBUG=false
                 - INSTALL_SOAP=false
                 - INSTALL_MONGO=true
                 - INSTALL_ZIP_ARCHIVE=true
@@ -66,17 +62,12 @@ services:
             - "9000"
         links:
             - workspace
-        extra_hosts:
-            # IMPORTANT: Replace with your Docker Host IP (will be appended to /etc/hosts)
-            - "dockerhost:10.78.10.177"
-            - "dev.hettestpanel.io:10.78.10.177"
-            - "dev.mercury.io:10.78.10.177"
-            - "tabulation.io:10.78.10.177"
-            - "lsapi.io:192.168.0.1"
+        extra_hosts: # Must be the ip of your docker0 network card!
+            - "dockerhost:172.17.0.1"
+            - "mercury.test:172.17.0.1"
         environment:
             # IMPORTANT: Set the Remote Interpreter entry matching name to `laravel`
             - PHP_IDE_CONFIG=serverName=laravel
-
     ### Nginx Server Container ##################################
 
     nginx:
@@ -178,4 +169,3 @@ volumes:
         driver: "local"
     sessions:    ## nothing is connected to this (- ./data/sessions:/sessions)
         driver: "local"
-
