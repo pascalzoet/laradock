@@ -16,7 +16,7 @@ services:
             args:
                 - INSTALL_RUBY=true
                 - INSTALL_PYTHON=true
-                - INSTALL_XDEBUG=false
+                - INSTALL_XDEBUG=true
                 - INSTALL_MONGO=false
                 - INSTALL_NODE=true
                 - INSTALL_YARN=true
@@ -33,8 +33,13 @@ services:
         volumes_from:
             - applications
         extra_hosts: # Must be the ip of your docker0 network card!
-            - "dockerhost:172.17.0.1"
-            - "mercuy.test:172.17.0.1"
+            - "dockerhost:192.168.2.22"
+            - "mercury.test:192.168.2.22"
+            - "newpi.io:192.168.2.22"
+            - "htp.test:192.168.2.22"
+            - "opiniemeters.io:192.168.2.22"
+            - "de.connect.io:192.168.2.22"
+            - "be.connect.io:192.168.2.22"
         ports:
             - "2222:22"
         tty: true
@@ -45,7 +50,7 @@ services:
         build:
             context: ./php-fpm
             args:
-                - INSTALL_XDEBUG=false
+                - INSTALL_XDEBUG=true
                 - INSTALL_SOAP=false
                 - INSTALL_MONGO=true
                 - INSTALL_ZIP_ARCHIVE=true
@@ -63,8 +68,13 @@ services:
         links:
             - workspace
         extra_hosts: # Must be the ip of your docker0 network card!
-            - "dockerhost:172.17.0.1"
-            - "mercury.test:172.17.0.1"
+            - "dockerhost:192.168.2.22"
+            - "mercury.test:192.168.2.22"
+            - "newpi.io:192.168.2.22"
+            - "htp.test:192.168.2.22"
+            - "opiniemeters.io:192.168.2.22"
+            - "de.connect.io:192.168.2.22"
+            - "be.connect.io:192.168.2.22"
         environment:
             # IMPORTANT: Set the Remote Interpreter entry matching name to `laravel`
             - PHP_IDE_CONFIG=serverName=laravel

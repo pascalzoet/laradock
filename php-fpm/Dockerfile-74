@@ -12,7 +12,7 @@
 # Note: Base Image name format {image-tag}-{php-version}
 #
 
-FROM laradock/php-fpm:2.5-7.3
+FROM php:7.4-fpm
 
 MAINTAINER Mahmoud Zalt <mahmoud@zalt.me>
 
@@ -38,6 +38,8 @@ MAINTAINER Mahmoud Zalt <mahmoud@zalt.me>
 #   - INSTALL_ZIP_ARCHIVE=true
 #
 
+
+RUN docker-php-ext-install pdo pdo_mysql
 #####################################
 # SOAP:
 #####################################
@@ -387,7 +389,7 @@ RUN if [ ${INSTALL_IMAP} = true ]; then \
 # Check PHP version:
 #####################################
 
-RUN php -v | head -n 1 | grep -q "PHP 7.3."
+RUN php -v | head -n 1 | grep -q "PHP 7.4."
 
 #
 #--------------------------------------------------------------------------

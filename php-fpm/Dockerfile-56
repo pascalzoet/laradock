@@ -10,7 +10,7 @@
 #    https://hub.docker.com/r/laradock/php-fpm/tags/
 #
 
-FROM laradock/php-fpm:7.0--1.2
+FROM php:5.6-fpm
 
 MAINTAINER Mahmoud Zalt <mahmoud@zalt.me>
 
@@ -53,12 +53,12 @@ RUN if [ ${INSTALL_SOAP} = true ]; then \
 # xDebug:
 #####################################
 
-# ARG INSTALL_XDEBUG=false
-# RUN if [ ${INSTALL_XDEBUG} = true ]; then \
-#     # Install the xdebug extension
-#     pecl install xdebug && \
-#     docker-php-ext-enable xdebug \
-# ;fi
+ARG INSTALL_XDEBUG=false
+RUN if [ ${INSTALL_XDEBUG} = true ]; then \
+    # Install the xdebug extension
+    pecl install xdebug && \
+    docker-php-ext-enable xdebug \
+;fi
 
 # Copy xdebug configration for remote debugging
 COPY ./xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
@@ -78,11 +78,10 @@ RUN if [ ${INSTALL_MONGO} = true ]; then \
 # ZipArchive:
 #####################################
 
-ARG INSTALL_ZIP_ARCHIVE=false
-RUN if [ ${INSTALL_ZIP_ARCHIVE} = true ]; then \
-    # Install the zip extension
-    docker-php-ext-install zip \
-;fi
+# ARG INSTALL_ZIP_ARCHIVE=false
+# RUN if [ ${INSTALL_ZIP_ARCHIVE} = true ]; then \
+#     docker-php-ext-install zip \
+# ;fi
 
 #####################################
 # PHP Memcached:
