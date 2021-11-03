@@ -46,7 +46,6 @@ services:
             - "krypton.io:172.21.0.8"
             - "portgrim.io:192.168.2.22"
             - "villa.io:192.168.2.22"
-            - "precision.io:192.168.2.22"
         ports:
             - "2222:22"
         tty: true
@@ -55,7 +54,6 @@ services:
             - backend
 
     ### PHP-FPM Container #######################################
-
     php-fpm:
         build:
             context: ./php-fpm
@@ -90,7 +88,6 @@ services:
             - "krypton.io:172.21.0.8"
             - "portgrim.io:192.168.2.22"
             - "villa.io:192.168.2.22"
-            - "precision.io:192.168.2.22"
         environment:
             # IMPORTANT: Set the Remote Interpreter entry matching name to `laravel`
             - PHP_IDE_CONFIG=serverName=laravel
@@ -98,11 +95,54 @@ services:
             - backend
     ### Nginx Server Container ##################################
 
-    php-fpm7.4:
-        build:
+    # php-fpm7.0:
+    #     build:
+    #         context: ./php-fpm
+    #         args:
+    #             - INSTALL_XDEBUG=false
+    #             - INSTALL_SOAP=false
+    #             - INSTALL_MONGO=true
+    #             - INSTALL_ZIP_ARCHIVE=true
+    #             - INSTALL_MEMCACHED=false
+    #             - INSTALL_OPCACHE=false
+    #             - INSTALL_AEROSPIKE_EXTENSION=false
+    #             - INSTALL_BCMATH=true
+    #             - INSTALL_PHPREDIS=true
+    #             - CODEIGNITER=false
+    #             - LARADOCK_PHP_VERSION=7.0
+    #         dockerfile: Dockerfile-70
+    #     # volumes_from:
+    #     #     - applications
+    #     volumes: 
+    #         - ~/workspace/:/var/www
+    #         - ./php-fpm/php56.ini:/usr/local/etc/php/php.ini
+    #     expose:
+    #         - "9000"
+    #     links:
+    #         - workspace
+    #     extra_hosts: # Must be the ip of your docker0 network card!
+    #         - "dockerhost:192.168.2.22"
+    #         - "mercury.test:172.21.0.3"
+    #         - "newpi.io:172.21.0.8"
+    #         - "htp.test:172.21.0.8"
+    #         - "opiniemeters.io:192.168.2.22"
+    #         - "de.connect.io:192.168.2.22"
+    #         - "be.connect.io:192.168.2.22"
+    #         - "krypton.io:172.21.0.8"
+    #         - "portgrim.io:192.168.2.22"
+    #         - "villa.io:192.168.2.22"
+    #     environment:
+    #         # IMPORTANT: Set the Remote Interpreter entry matching name to `laravel`
+    #         - PHP_IDE_CONFIG=serverName=laravel
+    #     networks:
+    #         - backend
+    # ### Nginx Server Container ##################################
+
+     php-fpm7.4:
+            build:
             context: ./php-fpm
             args:
-                - INSTALL_XDEBUG=true
+                - INSTALL_XDEBUG=false
                 - INSTALL_SOAP=false
                 - INSTALL_MONGO=true
                 - INSTALL_ZIP_ARCHIVE=true
@@ -112,52 +152,13 @@ services:
                 - INSTALL_BCMATH=true
                 - INSTALL_PHPREDIS=true
                 - CODEIGNITER=false
+                - LARADOCK_PHP_VERSION=7.4
             dockerfile: Dockerfile-74
         # volumes_from:
         #     - applications
         volumes: 
             - ~/workspace/:/var/www
-        expose:
-            - "9000"
-        links:
-            - workspace
-        extra_hosts: # Must be the ip of your docker0 network card!
-            - "dockerhost:192.168.2.22"
-            - "mercury.test:172.21.0.3"
-            - "newpi.io:172.21.0.8"
-            - "htp.test:172.21.0.8"
-            - "opiniemeters.io:192.168.2.22"
-            - "de.connect.io:192.168.2.22"
-            - "be.connect.io:192.168.2.22"
-            - "krypton.io:172.21.0.8"
-            - "portgrim.io:192.168.2.22"
-            - "villa.io:192.168.2.22"
-        environment:
-            # IMPORTANT: Set the Remote Interpreter entry matching name to `laravel`
-            - PHP_IDE_CONFIG=serverName=laravel
-        networks:
-            - backend
-    ### Nginx Server Container ##################################
-
-    php-fpm7.0:
-        build:
-            context: ./php-fpm
-            args:
-                - INSTALL_XDEBUG=true
-                - INSTALL_SOAP=false
-                - INSTALL_MONGO=true
-                - INSTALL_ZIP_ARCHIVE=true
-                - INSTALL_MEMCACHED=false
-                - INSTALL_OPCACHE=false
-                - INSTALL_AEROSPIKE_EXTENSION=false
-                - INSTALL_BCMATH=true
-                - INSTALL_PHPREDIS=true
-                - CODEIGNITER=false
-            dockerfile: Dockerfile-70
-        # volumes_from:
-        #     - applications
-        volumes: 
-            - ~/workspace/:/var/www
+            - ./php-fpm/php56.ini:/usr/local/etc/php/php.ini
         expose:
             - "9000"
         links:
