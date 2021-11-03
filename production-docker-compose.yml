@@ -46,6 +46,7 @@ services:
             - "krypton.io:172.21.0.8"
             - "portgrim.io:192.168.2.22"
             - "villa.io:192.168.2.22"
+            - "precision.io:192.168.2.22"
         ports:
             - "2222:22"
         tty: true
@@ -89,6 +90,7 @@ services:
             - "krypton.io:172.21.0.8"
             - "portgrim.io:192.168.2.22"
             - "villa.io:192.168.2.22"
+            - "precision.io:192.168.2.22"
         environment:
             # IMPORTANT: Set the Remote Interpreter entry matching name to `laravel`
             - PHP_IDE_CONFIG=serverName=laravel
