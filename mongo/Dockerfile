@@ -4,7 +4,7 @@ LABEL maintainer="Mahmoud Zalt <mahmoud@zalt.me>"
 
 #COPY mongo.conf /usr/local/etc/mongo/mongo.conf
 
-VOLUME /data/db /data/configdb
+VOLUME /data/mdb /data/configdb
 
 CMD ["mongod"]
 
